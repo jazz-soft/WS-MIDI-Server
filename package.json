@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "node ./server",
+    "open": "start https://jazz-soft.net"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "debug": "^4.4.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "http-errors": "^2.0.0",
+    "jzz-midi-ws": "^0.0.2",
+    "morgan": "^1.10.0",
+    "save": "^2.9.0",
+    "ws": "^8.18.1"
+  },
+  "private": true
+}
