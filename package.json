@@ -2,8 +2,7 @@
   "name": "server",
   "version": "0.0.0",
   "scripts": {
-    "start": "node ./server",
-    "open": "start https://jazz-soft.net"
+    "start": "node ./update && node ./server"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
@@ -11,9 +10,13 @@
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "http-errors": "^2.0.0",
+    "jzz": "^1.9.0",
+    "jzz-gui-select": "^1.1.7",
+    "jzz-input-kbd": "^1.3.3",
     "jzz-midi-ws": "^0.0.3",
+    "jzz-synth-tiny": "^1.4.2",
     "morgan": "^1.10.0",
-    "save": "^2.9.0",
+    "openurl": "^1.1.1",
     "ws": "^8.18.1"
   },
   "private": true

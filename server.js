@@ -1,5 +1,6 @@
 const os = require('os');
 const http = require('http');
+const openurl = require('openurl');
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -47,6 +48,7 @@ app.set('port', port);
 const server = http.createServer(app);
 server.on('listening', function() {
   console.log(`http://${myIP()}:${port}`);
+  openurl.open(`http://localhost:${port}`);
 });
 
 server.on('upgrade', midi.wss);

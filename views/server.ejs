@@ -1,1 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>WS MIDI Server</title>
+<script src="JZZ.js"></script>
+<script src="JZZ.input.Kbd.js"></script>
+<script src="JZZ.synth.Tiny.js"></script>
+</head>
+<body>
 <h1>WS MIDI Server</h1>
+<p>Keep this page open...</p>
+<p>
+<div id="piano"></div>
+</p>
+<p>
+<a href="/" target="_blank">WS MIDI Client</a>
+</p>
+<script>
+var synth = JZZ.synth.Tiny();
+var piano = JZZ.input.Kbd({at: "piano"});
+</script>
+</body>
+</html>

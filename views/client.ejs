@@ -1,1 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>WS MIDI Client</title>
+<script src="JZZ.js"></script>
+<script src="JZZ.gui.Select.js"></script>
+<script src="JZZ.input.Kbd.js"></script>
+<script src="JZZ.midi.WS.js"></script>
+</head>
+<body>
 <h1>WS MIDI Client</h1>
+<label for="select_midi_in">MIDI In:</label>
+<select id="select_midi_in"></select>
+<label for="select_midi_out">MIDI Out:</label>
+<select id="select_midi_out"></select>
+</p><p>
+<div id="piano"></div>
+</p>
+<script>
+JZZ({engine:'none'}); // hide local ports
+JZZ.WS.connect('ws://localhost:8888');
+var midi_in = JZZ.gui.SelectMidiIn({ at: 'select_midi_in' });
+var midi_out = JZZ.gui.SelectMidiOut({ at: 'select_midi_out' });
+var piano = JZZ.input.Kbd({at: "piano"});
+midi_in.connect(piano);
+piano.connect(midi_out);
+</script>
+</body>
+</html>
