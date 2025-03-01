@@ -15,13 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 const index = express.Router();
-var started = false;
 index.all('/', function(req, res) {
-  if (!started && req.get('host').split(':')[0] == 'localhost') {
-    started = true;
-    res.render('server');
-  }
-  else res.render('client');
+  res.render(req.headers.host.split(':')[0] == 'localhost' && !midi.master() ? 'server' : 'client');
 });
 app.use('/', index);
 

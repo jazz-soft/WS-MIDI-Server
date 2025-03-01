@@ -8,6 +8,21 @@ const midiws = new JZZ.WS.Server(wss1);
 const virtual_in = new JZZ.Widget();
 const virtual_out = new JZZ.Widget();
 
+var master;
+var timeout;
+wss2.on('connection', function connection(ws) {
+  if (timeout) clearTimeout(timeout);
+  timeout = undefined;
+  master = ws;
+  ws.on('error', console.error);
+  ws.on('close', function message() {
+    master = undefined;
+    timeout = setTimeout(process.exit, 1000);
+  });
+  ws.on('message', function message(data) {
+  });
+});
+
 JZZ().and(function() {
     var p;
     var info = JZZ().info();
@@ -42,11 +57,12 @@ module.exports = {
     if (req.url == '/') {
       wss1.handleUpgrade(req, socket, head, function(ws) { wss1.emit('connection', ws, req); });
     }
-    else if (req.url == '/master' && req.get('host').split(':')[0] == 'localhost') {
+    else if (req.url == '/master' && req.headers.host.split(':')[0] == 'localhost' && !master) {
       wss2.handleUpgrade(req, socket, head, function(ws) { wss2.emit('connection', ws, req); });
     }
     else {
       socket.destroy();
     }
-  }
+  },
+  master: function() { return !!master; }
 }
