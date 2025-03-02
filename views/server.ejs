@@ -4,6 +4,7 @@
 <title>Server</title>
 <script src="JZZ.js"></script>
 <script src="JZZ.input.Kbd.js"></script>
+<script src="JZZ.midi.WS.js"></script>
 <script src="JZZ.synth.Tiny.js"></script>
 </head>
 <body>
@@ -18,8 +19,23 @@
 <script>
 var synth = JZZ.synth.Tiny();
 var piano = JZZ.input.Kbd({at: "piano"});
+var synth = JZZ.synth.Tiny();
 
 var master = webSocket = new WebSocket((window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host + '/master');
+master.onopen = function() { send({ refresh: true }); };
+master.onmessage = function(evt) {
+  try {
+    var data = JSON.parse(evt.data);
+    if (data.info) {
+console.log(data.info);
+    }
+    else if (data.midi) synth.send(JZZ.WS.decode(data.midi));
+  }
+  catch (e) {console.log(e) /**/}
+};
+piano.connect(function(msg) { send({ midi: JZZ.WS.encode(msg) }); });
+
+function send(x) { master.send(JSON.stringify(x)); }
 </script>
 </body>
 </html>
