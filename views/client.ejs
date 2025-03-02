@@ -18,7 +18,7 @@
 </p>
 <script>
 JZZ({engine:'none'}); // hide local ports
-JZZ.WS.connect('ws://localhost:8888');
+JZZ.WS.connect((window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host);
 var midi_in = JZZ.gui.SelectMidiIn({ at: 'select_midi_in' });
 var midi_out = JZZ.gui.SelectMidiOut({ at: 'select_midi_out' });
 var piano = JZZ.input.Kbd({at: "piano"});
