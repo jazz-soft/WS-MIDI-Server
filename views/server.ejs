@@ -6,24 +6,44 @@
 <script src="JZZ.input.Kbd.js"></script>
 <script src="JZZ.midi.WS.js"></script>
 <script src="JZZ.synth.Tiny.js"></script>
+<style>
+#midiin, #midiout { border: solid #ccc;}
+.instr { background-color: #eee; margin: .2em; padding: .4em; border: solid #ddd;}
+</style>
 </head>
 <body>
 <h1>WS MIDI server</h1>
 <p>Closing this page will stop the server...</p>
-<p>
+<h2>MIDI In:</h2>
+<div id="midiin">
+<div class="instr">
 <div id="piano"></div>
-</p>
-<p>
-<a href="/" target="_blank">test client</a>
-</p>
+<input type="checkbox" id="cb1" checked> Virtual Piano
+</div>
+</div>
+<h2>MIDI Out:</h2>
+<div id="midiout">
+<div class="instr">
+<input type="checkbox" id="cb2" checked> Web Audio
+</div>
+</div>
+<h2>See also:</h2>
+<ul>
+<li><a href="/" target="_blank">Test client</a></li>
+<li><a href="https://github.com/jazz-soft/WS-MIDI-Server" target="_blank">GitHub repository</a></li>
+<li><a href="https://jazz-soft.net" target="_blank">Jazz-Soft.net</a></li>
+</ul>
 <script>
 var synth = JZZ.synth.Tiny();
 var piano = JZZ.input.Kbd({at: "piano"});
 var synth = JZZ.synth.Tiny();
+var inputs = {};
+var outputs = {};
 
 var master = webSocket = new WebSocket((window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host + '/master');
 master.onopen = function() { send({ refresh: true }); };
 master.onmessage = function(evt) {
+  var k, x;
   try {
     var data = JSON.parse(evt.data);
     if (data.info) {
@@ -34,8 +54,16 @@ console.log(data.info);
   catch (e) {console.log(e) /**/}
 };
 piano.connect(function(msg) { send({ midi: JZZ.WS.encode(msg) }); });
+handle(document.getElementById('cb1'), 'Virtual Piano', false);
+handle(document.getElementById('cb2'), 'Web Audio', true);
 
 function send(x) { master.send(JSON.stringify(x)); }
+function handle(cb, name, out) {
+  cb.addEventListener('change', function() {
+    var x = { name: name, hide: !this.checked };
+    send(out ? { output: x } : { input: x });
+  });
+}
 </script>
 </body>
 </html>

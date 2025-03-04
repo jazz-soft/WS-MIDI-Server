@@ -26,6 +26,9 @@ wss2.on('connection', function connection(ws) {
       data = JSON.parse(data);
       if (data.refresh) refresh();
       else if (data.midi) virtual_in.send(JZZ.WS.decode(data.midi));
+      else if (data.input) updateIn(data.input.name, data.input.hide);
+      else if (data.output) updateOut(data.output.name, data.output.hide);
+      else console.log('message:', data);
     }
     catch (e) {/**/}
   });
@@ -85,6 +88,22 @@ function removeMidiIn(name) {
 function removeMidiOut(name) {
   midiws.removeMidiOut(name);
   delete outputs[name];
+  refresh();
+}
+
+function updateIn(name, hide) {
+  if (!inputs[name] || hide == !!inputs[name].hide) return;
+  inputs[name].hide = hide;
+  if (hide) midiws.removeMidiIn(name);
+  else midiws.addMidiIn(name, inputs[name].port);
+  refresh();
+}
+
+function updateOut(name, hide) {
+  if (!outputs[name] || hide == !!outputs[name].hide) return;
+  outputs[name].hide = hide;
+  if (hide) midiws.removeMidiOut(name);
+  else midiws.addMidiOut(name, outputs[name].port);
   refresh();
 }
 
