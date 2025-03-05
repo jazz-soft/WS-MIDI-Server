@@ -9,6 +9,7 @@
 <style>
 #midiin, #midiout { border: solid #ccc;}
 .instr { background-color: #eee; margin: .2em; padding: .4em; border: solid #ddd;}
+.off { color: #aaa;}
 </style>
 </head>
 <body>
@@ -39,6 +40,10 @@ var piano = JZZ.input.Kbd({at: "piano"});
 var synth = JZZ.synth.Tiny();
 var inputs = {};
 var outputs = {};
+var cb1 = document.getElementById('cb1');
+var cb2 = document.getElementById('cb2');
+var midiin = document.getElementById('midiin');
+var midiout = document.getElementById('midiout');
 
 var master = webSocket = new WebSocket((window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host + '/master');
 master.onopen = function() { send({ refresh: true }); };
@@ -47,15 +52,20 @@ master.onmessage = function(evt) {
   try {
     var data = JSON.parse(evt.data);
     if (data.info) {
-console.log(data.info);
+      for (k of Object.keys(data.info.inputs)) if (!inputs[k]) inputs[k] = create(k, data.info.inputs[k], false);
+      for (k of Object.keys(data.info.outputs)) if (!outputs[k]) outputs[k] = create(k, data.info.outputs[k], true);
+      for (k of Object.keys(inputs)) update(inputs[k], data.info.inputs[k]);
+      for (k of Object.keys(outputs)) update(outputs[k], data.info.outputs[k]);
     }
     else if (data.midi) synth.send(JZZ.WS.decode(data.midi));
   }
   catch (e) {console.log(e) /**/}
 };
 piano.connect(function(msg) { send({ midi: JZZ.WS.encode(msg) }); });
-handle(document.getElementById('cb1'), 'Virtual Piano', false);
-handle(document.getElementById('cb2'), 'Web Audio', true);
+handle(cb1, 'Virtual Piano', false);
+inputs['Virtual Piano'] = { div: midiin, cb: cb1 };
+handle(cb2, 'Web Audio', true);
+outputs['Web Audio'] = { div: midiout, cb: cb2 };
 
 function send(x) { master.send(JSON.stringify(x)); }
 function handle(cb, name, out) {
@@ -63,6 +73,30 @@ function handle(cb, name, out) {
     var x = { name: name, hide: !this.checked };
     send(out ? { output: x } : { input: x });
   });
+}
+function create(name, x, out) {
+  var div = document.createElement('div');
+  var cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.checked = !x.hide;
+  div.className = 'instr';
+  div.appendChild(cb);
+  div.appendChild(document.createTextNode(' ' + name));
+  (out ? midiout : midiin).appendChild(div);
+  handle(cb, name, out);
+  return { div: div, cb: cb };
+}
+function update(q, x) {
+  if (!x || !x.open) {
+    q.div.classList.add('off');
+    q.cb.disabled = true;
+    q.cb.checked = false;
+  }
+  else {
+    q.div.classList.remove('off');
+    q.cb.disabled = false;
+    q.cb.checked = !x.hide;
+  }
 }
 </script>
 </body>
