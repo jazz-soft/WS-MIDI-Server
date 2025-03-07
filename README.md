@@ -16,3 +16,5 @@ to access these MIDI ports via the WebSockets.
 
 Or, you can implement your own client in any language,
 since the JSON protocol is quite straightforward. (Just check the code!)
+
+Test client page is included.
