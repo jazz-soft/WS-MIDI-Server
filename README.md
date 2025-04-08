@@ -3,7 +3,8 @@ WebSocket MIDI Server
 
 ## Usage
 `npm install`  
-`npm start`
+`npm start` or `npm start -- <port>`,  
+where `<port>` is the port number, default: `8888`
 
 ## How it works
 ![MIDI via WebSockets server screenshot](https://raw.githubusercontent.com/jazz-soft/WS-MIDI-Server/refs/heads/main/content/screen.png)

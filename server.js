@@ -38,7 +38,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-const port = 8888;
+var port = process.argv[2] || 8888;
 app.set('port', port);
 const server = http.createServer(app);
 server.on('listening', function() {
